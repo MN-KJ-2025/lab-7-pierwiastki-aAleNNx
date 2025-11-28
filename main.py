@@ -35,38 +35,16 @@ def roots_20(coef: np.ndarray) -> tuple[np.ndarray, np.ndarray] | None:
     return coef, roots
 
 
-def frob_a(coef: np.ndarray) -> np.ndarray | None:
-    """Funkcja służąca do wyznaczenia macierzy Frobeniusa na podstawie
-    współczynników jej wielomianu charakterystycznego:
-    w(x) = a_n*x^n + a_{n-1}*x^{n-1} + ... + a_2*x^2 + a_1*x + a_0
-
-    Testy wymagają poniższej definicji macierzy Frobeniusa (implementacja dla 
-    innych postaci nie jest zabroniona):
-    F = [[       0,        1,        0,   ...,            0],
-         [       0,        0,        1,   ...,            0],
-         [       0,        0,        0,   ...,            0],
-         [     ...,      ...,      ...,   ...,          ...],
-         [-a_0/a_n, -a_1/a_n, -a_2/a_n,   ..., -a_{n-1}/a_n]]
-
-    Args:
-        coef (np.narray): Wektor współczynników wielomianu (n,).
-
-    Returns:
-        (np.ndarray): Macierz Frobeniusa o rozmiarze (n,n).
-        Jeżeli dane wejściowe są niepoprawne funkcja zwraca `None`.
-    """
-    if not isinstance(coef, np.ndarray):
+def frob_a(a: np.ndarray) -> np.ndarray | None:
+    if not isinstance(a, np.ndarray) or a.ndim != 1 or len(a) < 2:
         return None
-    if coef.ndim != 1 or coef.size < 2:
+    if a[-1] == 0:
         return None
-    n = coef.size - 1
-    if coef[-1] == 0:
-        return None
-    F = np.zeros((n - 1, 1))
-    F = np.hstack([F, np.eye(n - 1, n - 1),])
-    Last_row = -coef[:-1] / coef[-1]
-    F = np.vstack([F, Last_row])
 
+    n = len(a) - 1
+    F = np.zeros((n, n))
+    F[:-1, 1:] = np.eye(n - 1)
+    F[-1, :] = -a[:-1] / a[-1]
     return F
 
 coef = [1, 4, 5, 2]
